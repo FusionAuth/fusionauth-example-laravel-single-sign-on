@@ -4,6 +4,9 @@ Sample application from the "Single sign-on with Laravel and FusionAuth" article
 ## Prerequisites
 You will need the following things properly installed on your computer.
 
+* [Git](http://git-scm.com/): Presumably you already have this on your machine if you are looking at this project locally; if not, use your platform's package manager to install git, and `git clone` this repo.
+* [Docker](https://www.docker.com) and [Docker Compose](https://docs.docker.com/compose/): For standing up FusionAuth from within a Docker container. (You can [install it other ways](https://fusionauth.io/docs/v1/tech/installation-guide/), but for this example you'll need Docker.)
+
 ## Installation
 1. Clone this repository
     ```shell
