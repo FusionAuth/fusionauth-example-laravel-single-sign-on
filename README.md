@@ -1,66 +1,64 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Single sign-on with Laravel and FusionAuth
+Sample application from the "Single sign-on with Laravel and FusionAuth" article
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Prerequisites
+You will need the following things properly installed on your computer.
 
-## About Laravel
+## Installation
+1. Clone this repository
+    ```shell
+    $ git clone git@github.com:FusionAuth/fusionauth-example-laravel-single-sign-on.git
+    ```
+2. Copy `.env.example` to `.env` and change the FusionAuth values there (they're in the end of the file):
+    ```env
+    # Paste both client Id and secret for your application
+    FUSIONAUTH_CLIENT_ID=<APP CLIENT ID FROM FUSIONAUTH>
+    FUSIONAUTH_CLIENT_SECRET=<APP CLIENT SECRET FROM FUSIONAUTH>
+    
+    # Specify a tenant Id or leave this blank for the default tenant
+    FUSIONAUTH_TENANT_ID=<ID FOR YOUR TENANT>
+    
+    # Replace http://localhost:9011 with the address where the FusionAuth application is running
+    FUSIONAUTH_BASE_URL=http://localhost:9011
+    
+    # Replace http://localhost with the address for your PHP application, if necessary
+    # We'll create the route for `/auth/callback` later##
+    FUSIONAUTH_REDIRECT_URI=http://localhost/auth/callback
+    ```
+3. Generate a new application key
+    ````shell
+    $ ./vendor/bin/sail artisan key:generate --ansi
+    ```
+4. Start Laravel application
+    ```shell
+    $ ./vendor/bin/sail up -d
+    ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## FusionAuth Configuration
+This example assumes that you will run FusionAuth from a Docker container. Run the commands below in a new folder to download the necessary `docker-compose.yml` and `.env` files to spin up a new FusionAuth instance.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```shell
+$ cd fusionauth
+$ ./install
+$ docker compose up -d
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+The FusionAuth configuration files also make use of a unique feature of FusionAuth, called Kickstart: when FusionAuth comes up for the first time, it will look at the [Kickstart file](./fusionauth/kickstart/kickstart.json) and mimic API calls to configure FusionAuth for use. It will perform all the necessary setup to make this demo work correctly, but if you are curious as to what the setup would look like by hand, the "FusionAuth configuration (by hand)" section of this README describes it in detail.
 
-## Learning Laravel
+Browse to [localhost:9011](http://localhost:9011/) to verify it is up and running.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+> **NOTE**: If you ever want to reset the FusionAuth system, delete the volumes created by docker compose by executing `docker compose down -v` inside the `fusionauth` folder. FusionAuth will only apply the Kickstart settings when it is first run (e.g., it has no data configured for it yet).
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Running / Development
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* Start services
+    ```shell
+    $ ./vendor/bin/sail up -d
+    ```
+* Navigate to [http://localhost](http://localhost) and click the "Log in" link in the upper right corner of that page to be taken to FusionAuth's login screen.
+* After filling and submiting the form, you should be redirected back to the "Welcome" page but instead of seeing the same "Log in" link, you should now see both "Home" and your name there!
 
-## Laravel Sponsors
+You can also register a new user for this application and will be automatically logged in after.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Log into the [FusionAuth admin screen](http://localhost:9011) with a different browser or incognito window using the admin user credentials ("admin@example.com"/"password") to explore the admin user experience.
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
